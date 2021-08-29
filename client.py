@@ -1,4 +1,4 @@
-imort socket
+import socket
 import threading
 import pyfirmata
 
