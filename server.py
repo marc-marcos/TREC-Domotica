@@ -9,7 +9,7 @@ sock.listen(1)
 connections = []
 
 pin = (24)
-puerto = "\\.\ACM0" #/dev/tty/ACM0
+puerto = "/dev/ttyACM0"
 tarjeta = pyfirmata.ArduinoMega(puerto)
 
 
