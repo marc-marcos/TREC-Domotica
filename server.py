@@ -10,7 +10,9 @@ sock.bind(('0.0.0.0', 420))
 sock.listen(1)
 connections = []
 
-pin = (24)
+pin1 = (2)
+pin2 = (3)
+pin3 = (4)
 puerto = "/dev/ttyACM0"
 tarjeta = pyfirmata.ArduinoMega(puerto)
 
@@ -22,16 +24,30 @@ def handler(c, a):
         data = c.recv(1024)
         decodedData = data.decode()
 
-        if decodedData == 'turnOn':
-            tarjeta.digital[pin].write(1)
+        if decodedData == 'turnOn1':
+            tarjeta.digital[pin1].write(1)
 
-        if decodedData == 'turnOff':
-            tarjeta.digital[pin].write(0)
+        if decodedData == 'turnOff1':
+            tarjeta.digital[pin1].write(0)
+        
+        if decodedData == 'turnOn2':
+            tarjeta.digital[pin2].write(1)
+
+        if decodedData == 'turnOff2':
+            tarjeta.digital[pin2].write(0)
+
+        if decodedData == 'turnOn3':
+            tarjeta.digital[pin3].write(1)
+        
+        if decodedData == 'turnOff3':
+            tarjeta.digital[pin3].write(0)
 
         if not data:
             connections.remove(c)
             c.close()
             break
+
+        print(decodedData)
 
 while True:
     c, a = sock.accept()
