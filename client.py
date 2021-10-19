@@ -1,7 +1,7 @@
 import socket
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('192.168.0.226', 420))
+s.connect(('localhost', 420))
 
 while True:
     string_data = input('>>>')

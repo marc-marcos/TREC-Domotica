@@ -1,31 +1,25 @@
 # <3
 
-import socket
-import threading
-import pyfirmata
+import socket, jsonHandling, threading, pyfirmata, time
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-sock.bind(('0.0.0.0', 420))
-sock.listen(1)
+sock.bind(('0.0.0.0', 420)) # locahost
+sock.listen(1) # only one connection at the same time
 connections = []
 
-pin1 = (2)
-pin2 = (3)
-pin3 = (4)
-pinsList = (2, 3, 4)
+pin1 = 50
+pin2 = 52
+pin3 = 54
 
-pinAuto = (5)
-puerto = "/dev/ttyACM0"
+pinLDR = 8
+
+puerto = 'COM3'
 tarjeta = pyfirmata.ArduinoMega(puerto)
 
-def turnAllOff(pins):
-    for i in pins:
-        tarjeta.digital[i].write(0)
+it = pyfirmata.util.Iterator(tarjeta)
+it.start()
 
-def turnAllOn(pins):
-    for i in pins:
-        tarjeta.digital[i].write(1)
+tarjeta.analog[pinLDR].enable_reporting()
 
 def handler(c, a):
     global connections
@@ -33,49 +27,61 @@ def handler(c, a):
     while True:
         data = c.recv(1024)
         decodedData = data.decode()
+
+        if decodedData == 'autoModeOn':
+            jsonHandling.writeData('serverCalls.json', 'autoMode', 1) # AUTO MODE ON JSON
+
+        if decodedData == 'autoModeOff':
+            jsonHandling.writeData('serverCalls.json', 'autoMode', 0)
         
-        if decodedData == 'turnAllOff':
-            turnAllOff(pinsList)
-
         if decodedData == 'turnOn1':
-            tarjeta.digital[pin1].write(1)
-
+            tarjeta.digital[pin1].write(1) # LED 1
+        
         if decodedData == 'turnOff1':
             tarjeta.digital[pin1].write(0)
         
         if decodedData == 'turnOn2':
-            tarjeta.digital[pin2].write(1)
-
+            tarjeta.digital[pin2].write(1) # LED 2
+        
         if decodedData == 'turnOff2':
             tarjeta.digital[pin2].write(0)
-
+        
         if decodedData == 'turnOn3':
-            tarjeta.digital[pin3].write(1)
+            tarjeta.digital[pin3].write(1) # LED 3
         
         if decodedData == 'turnOff3':
             tarjeta.digital[pin3].write(0)
-
-        if decodedData == 'turnOnAuto':
-            tarjeta.digital[pinAuto].write(1)
-            turnAllOff(pinsList)
-            
-        
-        if decodedData == 'turnOffAuto':
-            tarjeta.digital[pinAuto].write(0)
-            turnAllOn(pinsList)
 
         if not data:
             connections.remove(c)
             c.close()
             break
 
+def handleServer():
+    while True:
+        c, a = sock.accept()
+        cThread = threading.Thread(target=handler, args=(c, a))
+        cThread.daemon = True
+        cThread.start()
+        connections.append(c)
+        #print(connections)
 
-        print(decodedData)
+def arduino():
+    while True:
+        if jsonHandling.readData('serverCalls.json', 'autoMode') == 1:
+            input = tarjeta.analog[pinLDR].read()
+            print(input)
 
-while True:
-    c, a = sock.accept()
-    cThread = threading.Thread(target=handler, args=(c, a))
-    cThread.daemon = True
-    cThread.start()
-    connections.append(c)
-    #print(connections)
+            if input != None:
+                if float(input) < 0.3:
+                    tarjeta.digital[pin1].write(1)
+                    tarjeta.digital[pin2].write(1)
+                    
+                else:
+                    tarjeta.digital[pin1].write(0)
+                    tarjeta.digital[pin2].write(0)
+        
+        time.sleep(0.1)
+
+threading.Thread(target = handleServer).start()
+threading.Thread(target = arduino).start()
