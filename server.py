@@ -51,6 +51,13 @@ def handler(c, a):
         
         if decodedData == 'turnOff3':
             tarjeta.digital[pin3].write(0)
+        
+        if decodedData == 'outsideAutoMode':
+            toggle = jsonHandling.readData('serverCalls.json', 'outsideAutoMode')
+            if toggle:
+                jsonHandling.writeData('serverCalls.json', 'outsideAutoMode', 0)
+            else:
+                jsonHandling.writeData('serverCalls.json', 'outsideAutoMode', 1)
 
         if not data:
             connections.remove(c)
