@@ -39,32 +39,23 @@ def handler(c, a):
         data = c.recv(1024)
         decodedData = data.decode()
 
-        if decodedData == 'toggle1':
-            toggle = jsonHandling.readData('serverCalls.json', 'led1')
-            if toggle:
-                jsonHandling.writeData('serverCalls.json', 'led1', False)
-                tarjeta.digital[pin1].write(0)
-            else:
-                jsonHandling.writeData('serverCalls.json', 'led1', True)
-                tarjeta.digital[pin1].write(1)
+        if decodedData == 'turnOn1':
+            tarjeta.digital[pin1].write(1)
         
-        if decodedData == 'toggle2':
-            toggle = jsonHandling.readData('serverCalls.json', 'led2')
-            if toggle:
-                jsonHandling.writeData('serverCalls.json', 'led2', False)
-                tarjeta.digital[pin2].write(0)
-            else:
-                jsonHandling.writeData('serverCalls.json', 'led2', True)
-                tarjeta.digital[pin2].write(1)
+        if decodedData == 'turnOff1':
+            tarjeta.digital[pin1].write(0)
 
-        if decodedData == 'toggle3':
-            toggle = jsonHandling.readData('serverCalls.json', 'led3')
-            if toggle:
-                jsonHandling.writeData('serverCalls.json', 'led3', False)
-                tarjeta.digital[pin3].write(0)
-            else:
-                jsonHandling.writeData('serverCalls.json', 'led3', True)
-                tarjeta.digital[pin3].write(1)
+        if decodedData == 'turnOn2':
+            tarjeta.digital[pin2].write(1)
+        
+        if decodedData == 'turnOff2':
+            tarjeta.digital[pin2].write(0)
+        
+        if decodedData == 'turnOn3':
+            tarjeta.digital[pin3].write(1)
+        
+        if decodedData == 'turnOff3':
+            tarjeta.digital[pin3].write(0)
         
         if decodedData == 'outsideAutoMode':
             toggle = jsonHandling.readData('serverCalls.json', 'outsideAutoMode')
@@ -79,6 +70,12 @@ def handler(c, a):
                 jsonHandling.writeData('serverCalls.json', 'autoMode', False)
             else:
                 jsonHandling.writeData('serverCalls.json', 'autoMode', True)
+        
+        if decodedData == 'interiorAlarmOn':
+            jsonHandling.writeData('serverCalls.json', 'interiorAlarm', True)
+
+        if decodedData == 'interiorAlarmOff':
+            jsonHandling.writeData('serverCalls.json', 'interiorAlarm', False)
 
         if not data:
             connections.remove(c)
@@ -126,8 +123,8 @@ def arduino():
                     tarjeta.digital[pinExt4].write(0)
 
         # ALARM SYSTEM
-        if jsonHandling.readData('serverCalls.json', 'alarmOn') == 1:
-            iterator = pyfirmata.util.Iterator(board)
+        if jsonHandling.readData('serverCalls.json', 'interiorAlarm') == 1:
+            iterator = pyfirmata.util.Iterator(tarjeta)
             iterator.start()
 
             input = tarjeta.digital[detectorPin].read()
@@ -142,6 +139,8 @@ def alarma():
     time.sleep(1)
     tarjeta.digital[piezoPin].write(0)
     time.sleep(1)
+
+# LOOP THREADS
 
 threading.Thread(target = handleServer).start()
 threading.Thread(target = arduino).start()
