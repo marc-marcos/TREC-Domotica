@@ -7,9 +7,18 @@ sock.bind(('0.0.0.0', 420)) # locahost
 sock.listen(1) # only one connection at the same time
 connections = []
 
-pin1 = 50
-pin2 = 52
-pin3 = 54
+pin1_0 = 34
+pin1_1 = 28
+pin1_2 = 27
+pin1_3 = 31
+
+pin2_0 = 30
+pin2_1 = 26
+
+pin3_0 = 36
+pin3_1 = 22
+
+pin4_0 = 32
 
 pinExt1 = 42
 pinExt2 = 43
@@ -30,7 +39,6 @@ it = pyfirmata.util.Iterator(tarjeta)
 it.start()
 
 tarjeta.analog[pinLDR].enable_reporting()
-tarjeta.digital[detectorPin].enable_reporting()
 
 def handler(c, a):
     global connections
@@ -40,22 +48,40 @@ def handler(c, a):
         decodedData = data.decode()
 
         if decodedData == 'turnOn1':
-            tarjeta.digital[pin1].write(1)
+            tarjeta.digital[pin1_0].write(1)
+            tarjeta.digital[pin1_1].write(1)
+            tarjeta.digital[pin1_2].write(1)
+            tarjeta.digital[pin1_3].write(1)
+            print("funciona")
         
         if decodedData == 'turnOff1':
-            tarjeta.digital[pin1].write(0)
+            tarjeta.digital[pin1_0].write(0)
+            tarjeta.digital[pin1_1].write(0)
+            tarjeta.digital[pin1_2].write(0)
+            tarjeta.digital[pin1_3].write(0)
+
 
         if decodedData == 'turnOn2':
-            tarjeta.digital[pin2].write(1)
+            tarjeta.digital[pin2_0].write(1)
+            tarjeta.digital[pin2_1].write(1)
         
         if decodedData == 'turnOff2':
-            tarjeta.digital[pin2].write(0)
+            tarjeta.digital[pin2_0].write(0)
+            tarjeta.digital[pin2_1].write(0)
         
         if decodedData == 'turnOn3':
-            tarjeta.digital[pin3].write(1)
+            tarjeta.digital[pin3_0].write(1)
+            tarjeta.digital[pin3_1].write(1)
         
         if decodedData == 'turnOff3':
-            tarjeta.digital[pin3].write(0)
+            tarjeta.digital[pin3_0].write(0)
+            tarjeta.digital[pin3_1].write(0)
+
+        if decodedData == 'turnOn4':
+            tarjeta.digital[pin4_0].write(1)
+
+        if decodedData == 'turnOff4':
+            tarjeta.digital[pin4_0].write(0)
         
         if decodedData == 'outsideAutoMode':
             toggle = jsonHandling.readData('serverCalls.json', 'outsideAutoMode')
@@ -93,7 +119,6 @@ def handleServer():
 
 def arduino():
     while True:
-
         # AUTO MODE AND EXTERIOR AUTO MODE
         if jsonHandling.readData('serverCalls.json', 'autoMode') == 1:
             input = tarjeta.analog[pinLDR].read()
