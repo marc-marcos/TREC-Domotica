@@ -1,46 +1,13 @@
-# <3
-
-import socket, jsonHandling, threading, pyfirmata, time
+import serial, time, socket, jsonHandling, threading
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.bind(('0.0.0.0', 420)) # locahost
-sock.listen(1) # only one connection at the same time
+sock.bind(('0.0.0.0', 420))
+sock.listen(1)
 connections = []
 
 puerto = 'COM3'
-tarjeta = pyfirmata.ArduinoMega(puerto)
-
-pin1_0 = 34
-pin1_1 = 28
-pin1_2 = 27
-pin1_3 = 31
-
-pin2_0 = 30
-pin2_1 = 26
-
-pin3_0 = 36
-pin3_1 = 22
-
-pin4_0 = 32
-
-pinExt1 = 42
-pinExt2 = 43
-pinExt3 = 44
-pinExt4 = 45
-
-pinLDR = 15
-pinExtLDR = 0
-
-buzz_pin = tarjeta.get_pin('d:9:p')
-detectorPin = 0
-timbrePin = tarjeta.digital[51]
-# timbrePin.mode = pyfirmata.INPUT
-
-it = pyfirmata.util.Iterator(tarjeta)
-it.start()
-
-
-tarjeta.analog[pinLDR].enable_reporting()
+arduino = serial.Serial(puerto, 9600)
+time.sleep(2)
 
 def handler(c, a):
     global connections
@@ -50,58 +17,38 @@ def handler(c, a):
         decodedData = data.decode()
 
         if decodedData == 'turnOn1':
-            tarjeta.digital[pin1_0].write(1)
-            tarjeta.digital[pin1_1].write(1)
-            tarjeta.digital[pin1_2].write(1)
-            tarjeta.digital[pin1_3].write(1)
-            print("funciona")
+            arduino.write(b'1')
+            print('testing')
         
         if decodedData == 'turnOff1':
-            tarjeta.digital[pin1_0].write(0)
-            tarjeta.digital[pin1_1].write(0)
-            tarjeta.digital[pin1_2].write(0)
-            tarjeta.digital[pin1_3].write(0)
-
-
+            arduino.write(b'2')
+        
         if decodedData == 'turnOn2':
-            tarjeta.digital[pin2_0].write(1)
-            tarjeta.digital[pin2_1].write(1)
+            arduino.write(b'3')
         
         if decodedData == 'turnOff2':
-            tarjeta.digital[pin2_0].write(0)
-            tarjeta.digital[pin2_1].write(0)
+            arduino.write(b'4')
         
         if decodedData == 'turnOn3':
-            tarjeta.digital[pin3_0].write(1)
-            tarjeta.digital[pin3_1].write(1)
+            arduino.write(b'5')
         
         if decodedData == 'turnOff3':
-            tarjeta.digital[pin3_0].write(0)
-            tarjeta.digital[pin3_1].write(0)
-
-        if decodedData == 'turnOn4':
-            tarjeta.digital[pin4_0].write(1)
-
-        if decodedData == 'turnOff4':
-            tarjeta.digital[pin4_0].write(0)
+            arduino.write(b'6')
         
-
+        if decodedData == 'turnOn4':
+            arduino.write(b'7')
+        
+        if decodedData == 'turnOff4':
+            arduino.write(b'8')
+        
         if decodedData == 'turnOnAuto':
-            jsonHandling.writeData('serverCalls.json', 'autoMode', True)
+            jsonHandling.writeData('ServerCalls.json', 'autoMode', True)
+            print('true')
         
         if decodedData == 'turnOffAuto':
-            jsonHandling.writeData('serverCalls.json', 'autoMode', False)
+            jsonHandling.writeData('ServerCalls.json', 'autoMode', False)
+            print('false')
 
-        if decodedData == 'interiorAlarmOn':
-            jsonHandling.writeData('serverCalls.json', 'interiorAlarm', True)
-
-        if decodedData == 'interiorAlarmOff':
-            jsonHandling.writeData('serverCalls.json', 'interiorAlarm', False)
-
-        if not data:
-            connections.remove(c)
-            c.close()
-            break
 
 def handleServer():
     while True:
@@ -112,72 +59,38 @@ def handleServer():
         connections.append(c)
         #print(connections)
 
-def arduino():
+def getIterators():
     while True:
-        # AUTO MODE AND EXTERIOR AUTO MODE
-        if jsonHandling.readData('serverCalls.json', 'autoMode') == 1:
-            input = tarjeta.analog[pinLDR].read()
-            print(input)
 
-            if input != None:
-                if float(input) > 0.4:
-                    tarjeta.digital[pin1_0].write(1)
-                    tarjeta.digital[pin1_1].write(1)
-                    tarjeta.digital[pin1_2].write(1)
-                    tarjeta.digital[pin1_3].write(1)
-                    tarjeta.digital[pin2_0].write(1)
-                    tarjeta.digital[pin2_1].write(1)
-                    tarjeta.digital[pin3_0].write(1)
-                    tarjeta.digital[pin3_1].write(1)
-                    tarjeta.digital[pin4_0].write(1)
+        cleanStr = arduino.readline().decode('utf-8')
+        # print(cleanStr)
+
+        try:
+            interiorLDR, distanceAlarm, temperature = cleanStr.split("/")
+                
+            if jsonHandling.readData('serverCalls.json', 'autoMode') == 1:
+                if interiorLDR != None:
+                    print(interiorLDR)
+                    if int(interiorLDR) > 700:
+                        arduino.write(b'9')
+                                
+                    else:
+                        arduino.write(b'0')
                     
-                else:
-                    tarjeta.digital[pin1_0].write(0)
-                    tarjeta.digital[pin1_1].write(0)
-                    tarjeta.digital[pin1_2].write(0)
-                    tarjeta.digital[pin1_3].write(0)
-                    tarjeta.digital[pin2_0].write(0)
-                    tarjeta.digital[pin2_1].write(0)
-                    tarjeta.digital[pin3_0].write(0)
-                    tarjeta.digital[pin3_1].write(0)
-                    tarjeta.digital[pin4_0].write(0)
-
-        # ALARM SYSTEM
-        if jsonHandling.readData('serverCalls.json', 'interiorAlarm') == 1:
-            iterator = pyfirmata.util.Iterator(tarjeta)
-            iterator.start()
-
-            input = tarjeta.digital[detectorPin].read()
-
-            if input == 1:
-                threading.Thread(target = alarma).start()
-
-        # TIMBRE
-        it = pyfirmata.util.Iterator(tarjeta)
-        it.start()
-
-        tarjeta.digital[51].mode = pyfirmata.INPUT
-        tarjeta.digital[8].mode = pyfirmata.OUTPUT
-        tarjeta.digital[51].enable_reporting()
-
-        if timbrePin.read():
-            print('timbre')
-            buzz_pin.write(0.6)
-            time.sleep(0.2)
+            if jsonHandling.readData('serverCalls.json', 'interiorAlarm') == 1:
+                if int(distanceAlarm) < 20:
+                    arduino.write(b'a')
             
-        
-        else:
-            buzz_pin.write(0)
-            time.sleep(0.2)
-        
-
-def alarma():
-    buzz_pin.write(0.6)
-    time.sleep(1)
-    buzz_pin.write(0)
-    time.sleep(1)
-
-# LOOP THREADS
-
+        except:
+            print('error')
+    
 threading.Thread(target = handleServer).start()
-threading.Thread(target = arduino).start()
+threading.Thread(target = getIterators).start()
+
+
+# import serial, time
+
+# arduino = serial.Serial("COM3", 9600)
+# time.sleep(2)
+# arduino.write(b'1')
+# arduino.close()
