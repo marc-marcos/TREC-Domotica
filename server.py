@@ -1,4 +1,4 @@
-import serial, time, socket, jsonHandling, threading
+import serial, time, socket, jsonHandling, threading, pandas
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.bind(('0.0.0.0', 420))
@@ -41,6 +41,12 @@ def handler(c, a):
         if decodedData == 'turnOff4':
             arduino.write(b'8')
         
+        if decodedData == 'onFogon':
+            arduino.write(b'b')
+        
+        if decodedData == 'offFogon':
+            arduino.write(b'c')
+        
         if decodedData == 'turnOnAuto':
             jsonHandling.writeData('ServerCalls.json', 'autoMode', True)
             print('true')
@@ -60,6 +66,9 @@ def handleServer():
         #print(connections)
 
 def getIterators():
+    df = pandas.DataFrame(columns = ["Temperatura", "Light Level"])
+    i = 0
+
     while True:
 
         cleanStr = arduino.readline().decode('utf-8')
@@ -81,8 +90,18 @@ def getIterators():
                 if int(distanceAlarm) < 20:
                     arduino.write(b'a')
             
-        except:
-            print('error')
+            df = df.append({"Temperatura":float(temperature), "Light Level":int(interiorLDR)}, ignore_index=True)
+            print(df)
+            time.sleep(1)
+            i += 1
+
+            if i % 10 == 0:
+                df.to_excel('excel.xlsx')
+                print('csv report generated')
+
+                
+        except Exception as e:
+            print(e)
     
 threading.Thread(target = handleServer).start()
 threading.Thread(target = getIterators).start()

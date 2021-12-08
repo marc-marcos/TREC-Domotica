@@ -32,6 +32,9 @@ DallasTemperature sensor(&oneWireBus);
 
 int tim = 0;
 
+const int ledRojo1 = 47;
+const int ledRojo2 = 49;
+
 void setup(){
   lcd.begin(16, 2);
   // Escribimos el Mensaje en el LCD.
@@ -150,6 +153,18 @@ void loop(){
         delay(50);
         analogWrite(pinBuzz, 0);
         delay(50);
+      }
+
+      else if (option == 'b')
+      {
+        digitalWrite(ledRojo1, HIGH);
+        digitalWrite(ledRojo2, HIGH);
+      }
+
+      else if (option == 'c')
+      {
+        digitalWrite(ledRojo1, LOW);
+        digitalWrite(ledRojo2, LOW);
       }
   }
 
