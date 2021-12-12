@@ -18,7 +18,7 @@ const int  pin3_1 = 22;
 
 const int  pin4_0 = 32;
 
-const int pinLDR = A15;
+const int pinLDR = 15;
 
 const int pinTimbre = 51;
 const int pinBuzz = 9;
@@ -62,6 +62,9 @@ void setup(){
 
   pinMode(TriggerPin, OUTPUT);
   pinMode(EchoPin, INPUT);
+
+  pinMode(ledRojo1, OUTPUT);
+  pinMode(ledRojo2, OUTPUT);
 
   sensor.begin(); 
 }

@@ -12,6 +12,7 @@ def handler(c, a):
         data = c.recv(1024)
         decodedData = data.decode()
 
+        print(data)
         print(decodedData)
 
         if not data:
