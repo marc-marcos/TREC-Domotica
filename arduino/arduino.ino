@@ -18,13 +18,13 @@ const int  pin3_1 = 22;
 
 const int  pin4_0 = 32;
 
-const int pinLDR = 15;
+const int pinLDR = A15;
 
 const int pinTimbre = 51;
 const int pinBuzz = 9;
 
-const int EchoPin = 13;
-const int TriggerPin = 12;
+const int EchoPin = 12;
+const int TriggerPin = 13;
 
 const int oneWirePin = 8;
 OneWire oneWireBus(oneWirePin);
@@ -62,9 +62,6 @@ void setup(){
 
   pinMode(TriggerPin, OUTPUT);
   pinMode(EchoPin, INPUT);
-
-  pinMode(ledRojo1, OUTPUT);
-  pinMode(ledRojo2, OUTPUT);
 
   sensor.begin(); 
 }
@@ -152,10 +149,18 @@ void loop(){
 
       else if (option == 'a')
       {
-        analogWrite(pinBuzz, 155);
-        delay(50);
-        analogWrite(pinBuzz, 0);
-        delay(50);
+          int alarma = 0;
+          while (alarma == 0){
+            analogWrite(pinBuzz, 155);
+            delay(500);
+            analogWrite(pinBuzz, 0);
+            delay(50);
+            analogWrite(pinBuzz, 155);
+            delay(500);
+            analogWrite(pinBuzz, 0);
+            delay(50);
+            alarma = digitalRead(pinTimbre);
+          }
       }
 
       else if (option == 'b')
@@ -174,6 +179,7 @@ void loop(){
   // VOID LOOP
   int LDR = analogRead(pinLDR);
   String stringLDR = String(LDR);
+  
   int cm = ping(TriggerPin, EchoPin);
   String stringCM = String(cm);
 
@@ -182,7 +188,7 @@ void loop(){
 
   sensor.requestTemperatures();
   
-  Serial.println(stringLDR + '/' + stringTemp + '/' + stringTemp);
+  Serial.println(stringLDR + '/' + stringTemp + '/' + stringCM);
 
   if (digitalRead(pinTimbre) == HIGH) // TIMBRE
   {
