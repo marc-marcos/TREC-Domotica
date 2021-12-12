@@ -1,4 +1,4 @@
-import serial, time, socket, jsonHandling, threading, pandas # Importem totes les lliberires
+import serial, time, socket, jsonHandling, threading, pandas, datetime # Importem totes les lliberires
 # serial -> per establir la comunicació serie entre Arduino i Python
 # time -> per poder esperar certs intervals de temps
 # socket -> pel servidor web
@@ -30,40 +30,46 @@ def handler(c, a): # Aquesta es la funció que rep les peticions de la aplicaci�
             arduino.write(b'1')
             print('testing')
         
-        if decodedData == 'turnOff1':
+        elif decodedData == 'turnOff1':
             arduino.write(b'2')
         
-        if decodedData == 'turnOn2':
+        elif decodedData == 'turnOn2':
             arduino.write(b'3')
         
-        if decodedData == 'turnOff2':
+        elif decodedData == 'turnOff2':
             arduino.write(b'4')
         
-        if decodedData == 'turnOn3':
+        elif decodedData == 'turnOn3':
             arduino.write(b'5')
         
-        if decodedData == 'turnOff3':
+        elif decodedData == 'turnOff3':
             arduino.write(b'6')
         
-        if decodedData == 'turnOn4':
+        elif decodedData == 'turnOn4':
             arduino.write(b'7')
         
-        if decodedData == 'turnOff4':
+        elif decodedData == 'turnOff4':
             arduino.write(b'8')
         
-        if decodedData == 'onFogon':
+        elif decodedData == 'onFogon':
             arduino.write(b'b')
         
-        if decodedData == 'offFogon':
+        elif decodedData == 'offFogon':
             arduino.write(b'c')
         
-        if decodedData == 'turnOnAuto':
+        elif decodedData == 'turnOnAuto':
             jsonHandling.writeData('ServerCalls.json', 'autoMode', True)
             print('true')
         
-        if decodedData == 'turnOffAuto':
+        elif decodedData == 'turnOffAuto':
             jsonHandling.writeData('ServerCalls.json', 'autoMode', False)
             print('false')
+        
+        else:
+            time = datetime.datetime.now()
+            arduino.write(f'{time.hour}:{time.minute}')
+
+        
 
 
 def handleServer():  # Aquesta funció serveix per gestionar les peticions a més baix nivell, es a dir rep les peticions i per cada petició que rep crea un nou "fil" per tal de que les peticions es processin el més ràpid possible.
@@ -119,12 +125,3 @@ def getIterators(): # Aquesta funció s'encarrega de totes les coses que tenen a
      
 threading.Thread(target = handleServer).start() # Encenem la funció que s'encarrega del servidor.
 threading.Thread(target = getIterators).start() # Encenem la funció que s'encarrega dels iteradors.
-
-
-
-# import serial, time
-
-# arduino = serial.Serial("COM3", 9600)
-# time.sleep(2)
-# arduino.write(b'1')
-# arduino.close()

@@ -174,11 +174,19 @@ void loop(){
         digitalWrite(ledRojo1, LOW);
         digitalWrite(ledRojo2, LOW);
       }
+
+      else
+      {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print(option)
+      }
   }
 
   // VOID LOOP
   int LDR = analogRead(pinLDR);
-  String stringLDR = String(LDR);
+  int LDR2 = LDR/10
+  String stringLDR = String(LDR2);
   
   int cm = ping(TriggerPin, EchoPin);
   String stringCM = String(cm);
@@ -203,20 +211,17 @@ void loop(){
   }
 
   tim = (millis() / 10000)%10; // Aqui posem les dades que volem a la pantalla LCD i les canviem cada 10 segons.
+  
   if (tim % 2 != 0){
     lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Temperatura: ");
     lcd.setCursor(0, 1);
-    lcd.print(stringTemp + " C");
+    lcd.print("Temp: " + stringTemp + " C");
   }
 
   if (tim % 2 == 0) {
     lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Nivell de llum: %");
     lcd.setCursor(0, 1);
-    lcd.print(LDR/10);
+    lcd.print("Llum: " + stringLDR + " %");
   }
 }
 
