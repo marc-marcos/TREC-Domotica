@@ -1,4 +1,4 @@
-import serial, time, socket, jsonHandling, threading, pandas, datetime # Importem totes les lliberires
+import serial, time, socket, jsonHandling, threading, pandas # Importem totes les lliberires
 # serial -> per establir la comunicació serie entre Arduino i Python
 # time -> per poder esperar certs intervals de temps
 # socket -> pel servidor web
@@ -64,10 +64,6 @@ def handler(c, a): # Aquesta es la funció que rep les peticions de la aplicaci�
         elif decodedData == 'turnOffAuto':
             jsonHandling.writeData('ServerCalls.json', 'autoMode', False)
             print('false')
-        
-        else:
-            time = datetime.datetime.now()
-            arduino.write(f'{time.hour}:{time.minute}')
 
         
 

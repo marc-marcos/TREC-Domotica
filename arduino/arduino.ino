@@ -2,6 +2,8 @@
 #include <LiquidCrystal.h> // Icloem totes les llibreries necessaries
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <Time.h>
+#include <TimeLib.h>
 
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7); // Inicialitzem la pantalla LCD
 
@@ -35,7 +37,12 @@ int tim = 0; // Temporitzador
 const int ledRojo1 = 47;
 const int ledRojo2 = 49;
 
+time_t fecha;
+
 void setup(){
+  setTime(19, 11, 30, 12, 12, 2021); // Amb aquesta funció posem el rellotge d'Arduino en hora
+  // setTime(hora,minutos,segundos,dia,mes,anyo);
+
   lcd.begin(16, 2); // Iniciem la pantalla LCD
   // Escribimos el Mensaje en el LCD.
   lcd.print("Temperatura: ");
@@ -174,18 +181,11 @@ void loop(){
         digitalWrite(ledRojo1, LOW);
         digitalWrite(ledRojo2, LOW);
       }
-
-      else
-      {
-        lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.print(option)
-      }
   }
 
   // VOID LOOP
   int LDR = analogRead(pinLDR);
-  int LDR2 = LDR/10
+  int LDR2 = LDR/10;
   String stringLDR = String(LDR2);
   
   int cm = ping(TriggerPin, EchoPin);
@@ -211,15 +211,20 @@ void loop(){
   }
 
   tim = (millis() / 10000)%10; // Aqui posem les dades que volem a la pantalla LCD i les canviem cada 10 segons.
-  
+  fecha = now();
+  lcd.clear();
+  lcd.setCursor(0, 0);
+
+  String stringHora = String(hour(fecha));
+  String stringMinuto = String(minute(fecha));
+  lcd.print("Hora: " + stringHora + ":" + stringMinuto); // A la pantalla també ensenyem quina hora és en aquell moment
+
   if (tim % 2 != 0){
-    lcd.clear();
     lcd.setCursor(0, 1);
     lcd.print("Temp: " + stringTemp + " C");
   }
 
   if (tim % 2 == 0) {
-    lcd.clear();
     lcd.setCursor(0, 1);
     lcd.print("Llum: " + stringLDR + " %");
   }
