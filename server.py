@@ -1,4 +1,10 @@
 import serial, time, socket, jsonHandling, threading, pandas # Importem totes les lliberires
+# serial -> per establir la comunicació serie entre Arduino i Python
+# time -> per poder esperar certs intervals de temps
+# socket -> pel servidor web
+# jsonHandling -> per modificar els arxius JSON, aquesta es una llibreria escrita integrament per mi
+# threading -> per poder fer tasques en paralel
+# pandas -> per poder exportar les dades de temperatura i llum com a format .xlsx (Excel)
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Iniciem el servidor web
 sock.bind(('0.0.0.0', 420))

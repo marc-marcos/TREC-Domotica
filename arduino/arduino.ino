@@ -1,11 +1,11 @@
 // Incluimos librería
-#include <LiquidCrystal.h>
+#include <LiquidCrystal.h> // Icloem totes les llibreries necessaries
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
+LiquidCrystal lcd(2, 3, 4, 5, 6, 7); // Inicialitzem la pantalla LCD
 
-const int  pin1_0 = 34;
+const int  pin1_0 = 34; // Definim tots els pins que utilitzarem
 const int  pin1_1 = 28;
 const int  pin1_2 = 27;
 const int  pin1_3 = 31;
@@ -23,24 +23,24 @@ const int pinLDR = A15;
 const int pinTimbre = 51;
 const int pinBuzz = 9;
 
-const int EchoPin = 12;
+const int EchoPin = 12; // Ultrasons
 const int TriggerPin = 13;
 
-const int oneWirePin = 8;
+const int oneWirePin = 8; // Diode pel detector de temperatura
 OneWire oneWireBus(oneWirePin);
 DallasTemperature sensor(&oneWireBus);
 
-int tim = 0;
+int tim = 0; // Temporitzador
 
 const int ledRojo1 = 47;
 const int ledRojo2 = 49;
 
 void setup(){
-  lcd.begin(16, 2);
+  lcd.begin(16, 2); // Iniciem la pantalla LCD
   // Escribimos el Mensaje en el LCD.
   lcd.print("Temperatura: ");
   
-  Serial.begin(9600);
+  Serial.begin(9600); // Iniciem la comunicació Serie
   
   pinMode(pin1_0, OUTPUT);
   pinMode(pin1_1, OUTPUT);
@@ -61,19 +61,19 @@ void setup(){
   pinMode(pinBuzz, OUTPUT);
 
   pinMode(TriggerPin, OUTPUT);
-  pinMode(EchoPin, INPUT);
+  pinMode(EchoPin, INPUT); // Definim tots els ports digitals com entrades y sortides segons convingui
 
-  sensor.begin(); 
+  sensor.begin(); // Inicialitzem el sensor de temperatura
 }
 
 void loop(){
     if (Serial.available()>0) 
    {
-      char option = Serial.read();
+      char option = Serial.read(); // Llegim els missatges que li manem a Arduino desde Python i prenem les accions que convinguin.
       
       if (option == '1')
       {
-        digitalWrite(pin1_0, HIGH);
+        digitalWrite(pin1_0, HIGH); // Per exemple aquesta opció seria la d'encendre les llums del menjador, per tant posem a HIGH els 4 pins que hem posat que son els LED del menjador.
         digitalWrite(pin1_1, HIGH);
         digitalWrite(pin1_2, HIGH);
         digitalWrite(pin1_3, HIGH);
@@ -147,10 +147,10 @@ void loop(){
         digitalWrite(pin4_0, LOW);
       }
 
-      else if (option == 'a')
+      else if (option == 'a') // Aquesta opció es l'activació de l'alarma
       {
           int alarma = 0;
-          while (alarma == 0){
+          while (alarma == 0){ // Si l'alarma es dispara no es pararà fins que es pulsi el botó per desactivarla
             analogWrite(pinBuzz, 155);
             delay(500);
             analogWrite(pinBuzz, 0);
@@ -188,9 +188,9 @@ void loop(){
 
   sensor.requestTemperatures();
   
-  Serial.println(stringLDR + '/' + stringTemp + '/' + stringCM);
+  Serial.println(stringLDR + '/' + stringTemp + '/' + stringCM); // Aquesta part s'encarrega també mitjançant comunicació serie de manar-li a Python les dades del sensor de distancia, de temperatura i de llum.
 
-  if (digitalRead(pinTimbre) == HIGH) // TIMBRE
+  if (digitalRead(pinTimbre) == HIGH) // Aqui ens encarreguem de detectar si algú està fent sonar el timbre i fer sonar el timbre.
   {
     analogWrite(pinBuzz, 155);
     delay(500);
@@ -202,7 +202,7 @@ void loop(){
     delay(50);
   }
 
-  tim = (millis() / 10000)%10;
+  tim = (millis() / 10000)%10; // Aqui posem les dades que volem a la pantalla LCD i les canviem cada 10 segons.
   if (tim % 2 != 0){
     lcd.clear();
     lcd.setCursor(0, 0);
