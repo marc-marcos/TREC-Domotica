@@ -65,6 +65,13 @@ def handler(c, a): # Aquesta es la funció que rep les peticions de la aplicaci�
             jsonHandling.writeData('ServerCalls.json', 'autoMode', False)
             print('false')
 
+        elif decodedData == 'turnAlarmaOn':
+            jsonHandling.writeData('ServerCalls.json', 'alarm', True)
+        
+        elif decodedData == 'turnAlarmaOff':
+            jsonHandling.writeData('ServerCalls.json', 'alarm', False)
+            
+
         
 
 
@@ -93,7 +100,7 @@ def getIterators(): # Aquesta funció s'encarrega de totes les coses que tenen a
 
                 if interiorLDR != None:
                     print(interiorLDR)
-                    if int(interiorLDR) > 700:
+                    if int(interiorLDR) > 70:
                         arduino.write(b'9')
                                 
                     else:
