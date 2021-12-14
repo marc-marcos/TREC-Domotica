@@ -23,6 +23,7 @@ const int  pin4_0 = 32;
 const int pinLDR = A15;
 
 const int pinTimbre = 51;
+const int pinAlarma = 50;
 const int pinBuzz = 9;
 
 const int EchoPin = 12; // Ultrasons
@@ -65,6 +66,7 @@ void setup(){
   pinMode(pinLDR, INPUT);
 
   pinMode(pinTimbre, INPUT);
+  pinMode(pinAlarma, INPUT);
   pinMode(pinBuzz, OUTPUT);
 
   pinMode(TriggerPin, OUTPUT);
@@ -166,7 +168,7 @@ void loop(){
             delay(500);
             analogWrite(pinBuzz, 0);
             delay(50);
-            alarma = digitalRead(pinTimbre);
+            alarma = digitalRead(pinAlarma);
           }
       }
 
