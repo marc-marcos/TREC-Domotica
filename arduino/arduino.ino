@@ -185,7 +185,7 @@ void loop(){
 
   // VOID LOOP
   int LDR = analogRead(pinLDR);
-  int LDR2 = LDR/10;
+  int LDR2 = 100-(LDR/10);
   String stringLDR = String(LDR2);
   
   int cm = ping(TriggerPin, EchoPin);
