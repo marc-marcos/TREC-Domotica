@@ -113,7 +113,7 @@ def getIterators(): # Aquesta funció s'encarrega de totes les coses que tenen a
                     arduino.write(b'a')
                     jsonHandling.writeData('serverCalls.json', 'alarm', 0)
             
-            if i % 5 == 0: # Nomès escriurem les mesures a l'Excel cada 30 iteracions per no agafar una quantitat excessiva.
+            if i % 10 == 0: # Nomès escriurem les mesures a l'Excel cada 30 iteracions per no agafar una quantitat excessiva.
                 df = df.append({"Temperatura":float(temperature), "Light Level":int(interiorLDR)}, ignore_index=True)
                 print(df)
                 # print(df)
@@ -121,7 +121,7 @@ def getIterators(): # Aquesta funció s'encarrega de totes les coses que tenen a
             i += 1 # Cada vegada que aquest loop fa una volta li sumem 1 a i i quan i es multiple de 30 (més o menys cada 30 segons), agafem tots els valors de temperatura i llum i els guardem a excel.xlsx .
 
 
-            if i % 10 == 0:
+            if i % 30 == 0:
                 df.to_excel('excel.xlsx')
 
                 

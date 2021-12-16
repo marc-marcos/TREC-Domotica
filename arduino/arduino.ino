@@ -23,7 +23,7 @@ const int  pin4_0 = 32;
 const int pinLDR = A15;
 
 const int pinTimbre = 51;
-const int pinAlarma = 50;
+const int pinAlarma = 51;
 const int pinBuzz = 9;
 
 const int EchoPin = 12; // Ultrasons
@@ -71,6 +71,9 @@ void setup(){
 
   pinMode(TriggerPin, OUTPUT);
   pinMode(EchoPin, INPUT); // Definim tots els ports digitals com entrades y sortides segons convingui
+
+  pinMode(ledRojo1, OUTPUT);
+  pinMode(ledRojo2, OUTPUT);
 
   sensor.begin(); // Inicialitzem el sensor de temperatura
 }
