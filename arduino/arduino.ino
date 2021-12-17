@@ -23,7 +23,7 @@ const int  pin4_0 = 32;
 const int pinLDR = A15;
 
 const int pinTimbre = 51;
-const int pinAlarma = 51;
+const int pinAlarma = 11;
 const int pinBuzz = 9;
 
 const int EchoPin = 12; // Ultrasons
