@@ -11,9 +11,9 @@ sock.bind(('0.0.0.0', 420))
 sock.listen(1)
 connections = []
 
-f = open('filekey.key', 'r') # Obrim el fitxer on s'emmagatzema la clau de xifratge
-code = f.readline() # I la guardem en una variable amb la que la llibreria socket automaticament la desxifrará
-f.close()
+# f = open('filekey.key', 'r') # Obrim el fitxer on s'emmagatzema la clau de xifratge
+# code = f.readline() # I la guardem en una variable amb la que la llibreria socket automaticament la desxifrará
+# f.close()
 
 puerto = 'COM3'
 arduino = serial.Serial(puerto, 9600)

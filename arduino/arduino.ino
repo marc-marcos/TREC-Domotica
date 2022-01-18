@@ -203,7 +203,7 @@ void loop(){
   
   Serial.println(stringLDR + '/' + stringTemp + '/' + stringCM); // Aquesta part s'encarrega també mitjançant comunicació serie de manar-li a Python les dades del sensor de distancia, de temperatura i de llum.
 
-  if (digitalRead(pinTimbre) == HIGH) // Aqui ens encarreguem de detectar si algú està fent sonar el timbre i fer sonar el timbre.
+  if (digitalRead(pinTimbre) == LOW) // Aqui ens encarreguem de detectar si algú està fent sonar el timbre i fer sonar el timbre.
   {
     analogWrite(pinBuzz, 155);
     delay(500);
@@ -233,6 +233,7 @@ void loop(){
     lcd.setCursor(0, 1);
     lcd.print("Llum: " + stringLDR + " %");
   }
+
 }
 
 
